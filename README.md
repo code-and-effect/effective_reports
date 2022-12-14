@@ -1,12 +1,6 @@
 # Effective Reports
 
-The reports to an effective gem.
-
-```
-cp -r effective_reports effective_new_gem
-cd new_gem
-deep_rename reports new_gem
-```
+A dynamic ActiveRecord report builder.
 
 ## Getting Started
 
@@ -58,7 +52,7 @@ Add a link to the admin menu:
 ```haml
 - if can? :admin, :effective_reports
   - if can? :index, Effective::Reports
-    = nav_link_to 'Reports', effective_reports.admin_reportss_path
+    = nav_link_to 'Reports', effective_reports.admin_reports_path
 ```
 
 ## Configuration

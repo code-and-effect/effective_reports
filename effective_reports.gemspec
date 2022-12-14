@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Code and Effect']
   spec.email       = ['info@codeandeffect.com']
   spec.homepage    = 'https://github.com/code-and-effect/effective_reports'
-  spec.summary     = 'The effective reports for a new rails engine.'
-  spec.description = 'The effective reports for a new rails engine.'
+  spec.summary     = 'A dynamic ActiveRecord report builder'
+  spec.description = 'A dynamic ActiveRecord report builder'
   spec.license     = 'MIT'
 
   spec.files = Dir["{app,config,db,lib}/**/*"] + ['MIT-LICENSE', 'Rakefile', 'README.md']

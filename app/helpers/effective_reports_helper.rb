@@ -1,0 +1,3 @@
+module EffectiveReportsHelper
+
+end

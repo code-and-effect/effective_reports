@@ -1,5 +1,8 @@
 EffectiveReports.setup do |config|
-  # config.reports_table_name = :reports
+  config.reports_table_name = :reports
+  config.report_columns_table_name = :report_columns
+  config.report_scopes_table_name = :report_scopes
+
   # Layout Settings
   # Configure the Layout per controller, or all at once
   # config.layout = { application: 'application', admin: 'admin' }
@@ -8,6 +11,11 @@ EffectiveReports.setup do |config|
   # Configure the class responsible for the reports.
   # This should extend from Effective::Reports
   # config.reports_class_name = 'Effective::Reports'
+
+  # Reportable Class Names
+  # The following classes will be available to build reports from
+  # They must define acts_as_reportable to be included
+  config.reportable_class_names = ['User', 'Effective::Order']
 
   # Mailer Settings
   # Please see config/initializers/effective_reports.rb for default effective_* gem mailer settings

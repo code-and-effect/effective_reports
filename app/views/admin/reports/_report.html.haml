@@ -1,0 +1,5 @@
+- if report.description.present?
+  %p= report.description.to_s
+
+- datatable = EffectiveReportDatatable.new(report: report)
+= render_datatable(datatable)

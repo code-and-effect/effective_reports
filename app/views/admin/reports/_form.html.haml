@@ -1,0 +1,8 @@
+= tabs do
+  = tab 'Report' do
+    = render 'admin/reports/form_report', report: report
+
+  - if report.persisted?
+    - if report.respond_to?(:log_changes_datatable)
+      = tab 'Logs' do
+        = render_inline_datatable(report.log_changes_datatable)

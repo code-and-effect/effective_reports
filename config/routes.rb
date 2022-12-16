@@ -10,6 +10,7 @@ EffectiveReports::Engine.routes.draw do
   end
 
   namespace :admin do
+    resources :reports
   end
 
 end

@@ -1,0 +1,44 @@
+= effective_form_with(model: [:admin, report], engine: true) do |f|
+  = f.text_field :title
+  = f.text_area :description
+
+  = f.select :reportable_class_name, EffectiveReports.reportable_classes.map(&:name), label: 'Resource',
+    'data-load-ajax-url': effective_reports.new_admin_report_path,
+    'data-load-ajax-div': '#effective-reports-ajax'
+
+  #effective-reports-ajax
+    - attributes = f.object.reportable_attributes
+    - scopes = f.object.reportable_scopes
+    - scopes_collection = reportable_scopes_collection(scopes)
+
+    - if attributes.present?
+      %h2 Report Columns
+
+      = f.has_many :report_columns do |frc|
+        = frc.select :name, attributes
+
+    - if scopes.present?
+      %h2 Report Scopes
+
+      = f.has_many :report_scopes do |frs|
+        .row
+          .col
+            = frs.select :name, scopes_collection, grouped: true
+          .col
+            - scopes.select { |scope| scope.kind_of?(Hash) }.each do |scope|
+              - name = scope.keys.first
+              - type = scope.values.first
+
+              = frs.show_if(:name, name) do
+                - if type == :date
+                  = frs.date_field :value_date, label: 'Value'
+                - elsif type == :integer
+                  = frs.integer_field :value_integer, label: 'Value'
+                - elsif type == :price
+                  = frs.price_field :value_price, label: 'Value'
+                - elsif type == :string
+                  = frs.text_field :value_string, label: 'Value'
+                - else
+                  - raise("Unexpected scope datatype: #{type || 'nil'}")
+
+  = effective_submit(f)

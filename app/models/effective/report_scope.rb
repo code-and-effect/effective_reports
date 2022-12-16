@@ -8,6 +8,7 @@ module Effective
 
     effective_resource do
       name          :string
+
       advanced      :boolean      # The scope is a 0 arity symbol when false, or a 1 arity hash when true
 
       value_boolean  :boolean

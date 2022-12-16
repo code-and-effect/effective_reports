@@ -13,7 +13,9 @@ module Effective
     log_changes if respond_to?(:log_changes)
 
     DATATYPES = [:boolean, :date, :integer, :price, :string, :belongs_to]
-    OPERATIONS = [:equals, :includes, :starts_with, :ends_with, :greater_than, :greater_than_or_equal_to, :less_than, :less_than_or_equal_to]
+
+    # Arel::Predications.instance_methods
+    OPERATIONS = [:eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq]
 
     effective_resource do
       title                     :string
@@ -22,7 +24,7 @@ module Effective
       timestamps
     end
 
-    scope :deep, -> { includes(:report_columns) }
+    scope :deep, -> { includes(:report_columns, :report_scopes) }
     scope :sorted, -> { order(:title) }
 
     validates :title, presence: true, uniqueness: true
@@ -79,10 +81,29 @@ module Effective
 
       # Apply Scopes
       report_scopes.each do |scope|
-        collection = if scope.value.present?
+        collection = if !scope.value.nil?
           collection.send(scope.name, scope.value)
         else
           collection.send(scope.name)
+        end
+      end
+
+      # Apply Attributes
+      report_columns.select(&:filter?).each do |column|
+        attribute = collection.arel_table[column.name]
+
+        collection = case column.operation.to_sym
+          when :eq then collection.where(attribute.eq(column.value))
+          when :not_eq then collection.where(attribute.not_eq(column.value))
+          when :matches then collection.where(attribute.matches("%#{column.value}%"))
+          when :does_not_match then collection.where(attribute.does_not_match("%#{column.value}%"))
+          when :starts_with then collection.where(attribute.matches("#{column.value}%"))
+          when :ends_with then collection.where(attribute.matches("%#{column.value}"))
+          when :gt then collection.where(attribute.gt(column.value))
+          when :gteq then collection.where(attribute.gteq(column.value))
+          when :lt then collection.where(attribute.lt(column.value))
+          when :lteq then collection.where(attribute.lteq(column.value))
+          else raise("Unexpected operation: #{operation}")
         end
       end
 

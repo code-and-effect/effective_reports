@@ -5,10 +5,10 @@ module Effective
     belongs_to :created_by, polymorphic: true
 
     has_many :report_columns, -> { ReportColumn.sorted }, inverse_of: :report, dependent: :delete_all
-    accepts_nested_attributes_for :report_columns, allow_destroy: true
+    accepts_nested_attributes_for :report_columns, allow_destroy: true, reject_if: proc { |atts| atts['name'].blank? }
 
     has_many :report_scopes, -> { ReportScope.sorted }, inverse_of: :report, dependent: :delete_all
-    accepts_nested_attributes_for :report_scopes, allow_destroy: true
+    accepts_nested_attributes_for :report_scopes, allow_destroy: true, reject_if: proc { |atts| atts['name'].blank? }
 
     log_changes if respond_to?(:log_changes)
 
@@ -65,15 +65,15 @@ module Effective
     end
 
     # Replace the report_columns entirely
-    def report_columns_attributes=(atts)
-      report_columns.clear
-      super(EffectiveResources.replace_nested_attributes(atts))
-    end
+    # def report_columns_attributes=(atts)
+    #   report_columns.clear
+    #   super(EffectiveResources.replace_nested_attributes(atts))
+    # end
 
-    def report_scopes_attributes=(atts)
-      report_scopes.clear
-      super(EffectiveResources.replace_nested_attributes(atts))
-    end
+    # def report_scopes_attributes=(atts)
+    #   report_scopes.clear
+    #   super(EffectiveResources.replace_nested_attributes(atts))
+    # end
 
     # The klass to base the collection from
     def collection

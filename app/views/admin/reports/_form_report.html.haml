@@ -2,9 +2,12 @@
   = f.text_field :title
   = f.text_area :description
 
-  = f.select :reportable_class_name, EffectiveReports.reportable_classes.map(&:name), label: 'Resource',
-    'data-load-ajax-url': effective_reports.new_admin_report_path,
-    'data-load-ajax-div': '#effective-reports-ajax'
+  - if f.object.new_record?
+    = f.select :reportable_class_name, EffectiveReports.reportable_classes.map(&:name), label: 'Resource',
+      'data-load-ajax-url': effective_reports.new_admin_report_path,
+      'data-load-ajax-div': '#effective-reports-ajax'
+  - else
+    = f.static_field :reportable_class_name, label: 'Resource'
 
   #effective-reports-ajax
     -# Attributes

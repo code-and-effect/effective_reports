@@ -33,39 +33,36 @@
             .row
               .col-md-4
                 = frc.select :name, attributes_collection, label: false
-              .col-md-2
-                .mt-2= frc.check_box :filter, label: 'Filter by this column'
-              .col-md-6
-                = frc.show_if(:filter, true) do
-                  - if value_booleans.present?
-                    = frc.show_if_any(:name, value_booleans) do
-                      .row
-                        .col= frc.select :operation, reportable_operations_collection(:boolean), label: false
-                        .col= frc.radios :value_boolean, reportable_boolean_collection, label: false, buttons: true
+              .col
+                = frc.show_if_any(:name, value_booleans) do
+                  .row
+                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
+                    .col= frc.select :operation, reportable_operations_collection(:boolean), label: false
+                    .col= frc.radios :value_boolean, reportable_boolean_collection, label: false, buttons: true
 
-                  - if value_dates.present?
-                    = frc.show_if_any(:name, value_dates) do
-                      .row
-                        .col= frc.select :operation, reportable_operations_collection(:date), label: false
-                        .col= frc.date_field :value_date, label: false
+                = frc.show_if_any(:name, value_dates) do
+                  .row
+                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
+                    .col= frc.select :operation, reportable_operations_collection(:date), label: false
+                    .col= frc.date_field :value_date, label: false
 
-                  - if value_integers.present?
-                    = frc.show_if_any(:name, value_integers) do
-                      .row
-                        .col= frc.select :operation, reportable_operations_collection(:integer), label: false
-                        .col= frc.integer_field :value_integer, label: false
+                = frc.show_if_any(:name, value_integers) do
+                  .row
+                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
+                    .col= frc.select :operation, reportable_operations_collection(:integer), label: false
+                    .col= frc.integer_field :value_integer, label: false
 
-                  - if value_prices.present?
-                    = frc.show_if_any(:name, value_prices) do
-                      .row
-                        .col= frc.select :operation, reportable_operations_collection(:price), label: false
-                        .col= frc.price_field :value_price, label: false
+                = frc.show_if_any(:name, value_prices) do
+                  .row
+                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
+                    .col= frc.select :operation, reportable_operations_collection(:price), label: false
+                    .col= frc.price_field :value_price, label: false
 
-                  - if value_strings.present?
-                    = frc.show_if_any(:name, value_strings) do
-                      .row
-                        .col= frc.select :operation, reportable_operations_collection(:string), label: false
-                        .col= frc.text_field :value_string, label: false
+                = frc.show_if_any(:name, value_strings) do
+                  .row
+                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
+                    .col= frc.select :operation, reportable_operations_collection(:string), label: false
+                    .col= frc.text_field :value_string, label: false
 
     - if scopes.present?
       %h2 Report Scopes

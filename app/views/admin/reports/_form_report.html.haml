@@ -8,14 +8,54 @@
 
   #effective-reports-ajax
     - attributes = f.object.reportable_attributes
+    - attributes_collection = reportable_attributes_collection(attributes)
+
     - scopes = f.object.reportable_scopes
     - scopes_collection = reportable_scopes_collection(scopes)
+
+    - boolean_collection = [['Yes', true], ['No', false]]
+    - operations_collection = reportable_operations_collection()
+
+    - value_booleans = attributes.select { |_, type| type == :boolean }.keys
+    - value_dates = attributes.select { |_, type| type == :date }.keys
+    - value_integers = attributes.select { |_, type| type == :integer }.keys
+    - value_prices = attributes.select { |_, type| type == :price }.keys
+    - value_strings = attributes.select { |_, type| type == :string }.keys
 
     - if attributes.present?
       %h2 Report Columns
 
       = f.has_many :report_columns do |frc|
-        = frc.select :name, attributes
+        .row
+          .col
+            = frc.select :name, attributes_collection
+          .col
+            = frc.check_box :filter, label: 'Filter by this column'
+
+            = frc.show_if(:filter, true) do
+              .row
+                .col
+                  = frc.select :operation, operations_collection
+                .col
+                  - if value_booleans.present?
+                    = frc.show_if_any(:name, value_booleans) do
+                      = frc.select :value_boolean, boolean_collection, label: 'Value Bool', required: true
+
+                  - if value_dates.present?
+                    = frc.show_if_any(:name, value_dates) do
+                      = frc.date_field :value_date, label: 'Value Date', required: true
+
+                  - if value_integers.present?
+                    = frc.show_if_any(:name, value_integers) do
+                      = frc.integer_field :value_integer, label: 'Value Integer', required: true
+
+                  - if value_prices.present?
+                    = frc.show_if_any(:name, value_prices) do
+                      = frc.price_field :value_price, label: 'Value Price', required: true
+
+                  - if value_strings.present?
+                    = frc.show_if_any(:name, value_strings) do
+                      = frc.text_field :value_string, label: 'Value String', required: true
 
     - if scopes.present?
       %h2 Report Scopes
@@ -25,19 +65,20 @@
           .col
             = frs.select :name, scopes_collection, grouped: true
           .col
-            - scopes.select { |scope| scope.kind_of?(Hash) }.each do |scope|
-              - name = scope.keys.first
-              - type = scope.values.first
+            - scopes.select { |scope, type| type.present? }.each do |scope, type|
+              = frs.show_if(:name, scope) do
+                = frs.hidden_field :advanced, value: true
 
-              = frs.show_if(:name, name) do
-                - if type == :date
-                  = frs.date_field :value_date, label: 'Value'
+                - if type == :boolean
+                  = frs.select :value_boolean, boolean_collection, label: 'Value', required: true
+                - elsif type == :date
+                  = frs.date_field :value_date, label: 'Value', required: true
                 - elsif type == :integer
-                  = frs.integer_field :value_integer, label: 'Value'
+                  = frs.integer_field :value_integer, label: 'Value', required: true
                 - elsif type == :price
-                  = frs.price_field :value_price, label: 'Value'
+                  = frs.price_field :value_price, label: 'Value', required: true
                 - elsif type == :string
-                  = frs.text_field :value_string, label: 'Value'
+                  = frs.text_field :value_string, label: 'Value', required: true
                 - else
                   - raise("Unexpected scope datatype: #{type || 'nil'}")
 

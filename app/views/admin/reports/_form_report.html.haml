@@ -7,14 +7,9 @@
     'data-load-ajax-div': '#effective-reports-ajax'
 
   #effective-reports-ajax
+    -# Attributes
     - attributes = f.object.reportable_attributes
     - attributes_collection = reportable_attributes_collection(attributes)
-
-    - scopes = f.object.reportable_scopes
-    - scopes_collection = reportable_scopes_collection(scopes)
-
-    - boolean_collection = [['Yes', true], ['No', false]]
-    - operations_collection = reportable_operations_collection()
 
     - value_booleans = attributes.select { |_, type| type == :boolean }.keys
     - value_dates = attributes.select { |_, type| type == :date }.keys
@@ -22,64 +17,78 @@
     - value_prices = attributes.select { |_, type| type == :price }.keys
     - value_strings = attributes.select { |_, type| type == :string }.keys
 
+    -# Scopes
+    - scopes = f.object.reportable_scopes
+    - scopes_collection = reportable_scopes_collection(scopes)
+
     - if attributes.present?
       %h2 Report Columns
 
       = f.has_many :report_columns do |frc|
-        .row
-          .col
-            = frc.select :name, attributes_collection
-          .col
-            = frc.check_box :filter, label: 'Filter by this column'
-
-            = frc.show_if(:filter, true) do
-              .row
-                .col
-                  = frc.select :operation, operations_collection
-                .col
+        .card.mb-2
+          .card-body.pb-2
+            .row
+              .col-md-4
+                = frc.select :name, attributes_collection, label: false
+              .col-md-2
+                .mt-2= frc.check_box :filter, label: 'Filter by this column'
+              .col-md-6
+                = frc.show_if(:filter, true) do
                   - if value_booleans.present?
                     = frc.show_if_any(:name, value_booleans) do
-                      = frc.select :value_boolean, boolean_collection, label: 'Value Bool', required: true
+                      .row
+                        .col= frc.select :operation, reportable_operations_collection(:boolean), label: false
+                        .col= frc.radios :value_boolean, reportable_boolean_collection, label: false, buttons: true
 
                   - if value_dates.present?
                     = frc.show_if_any(:name, value_dates) do
-                      = frc.date_field :value_date, label: 'Value Date', required: true
+                      .row
+                        .col= frc.select :operation, reportable_operations_collection(:date), label: false
+                        .col= frc.date_field :value_date, label: false
 
                   - if value_integers.present?
                     = frc.show_if_any(:name, value_integers) do
-                      = frc.integer_field :value_integer, label: 'Value Integer', required: true
+                      .row
+                        .col= frc.select :operation, reportable_operations_collection(:integer), label: false
+                        .col= frc.integer_field :value_integer, label: false
 
                   - if value_prices.present?
                     = frc.show_if_any(:name, value_prices) do
-                      = frc.price_field :value_price, label: 'Value Price', required: true
+                      .row
+                        .col= frc.select :operation, reportable_operations_collection(:price), label: false
+                        .col= frc.price_field :value_price, label: false
 
                   - if value_strings.present?
                     = frc.show_if_any(:name, value_strings) do
-                      = frc.text_field :value_string, label: 'Value String', required: true
+                      .row
+                        .col= frc.select :operation, reportable_operations_collection(:string), label: false
+                        .col= frc.text_field :value_string, label: false
 
     - if scopes.present?
       %h2 Report Scopes
 
       = f.has_many :report_scopes do |frs|
-        .row
-          .col
-            = frs.select :name, scopes_collection, grouped: true
-          .col
-            - scopes.select { |scope, type| type.present? }.each do |scope, type|
-              = frs.show_if(:name, scope) do
-                = frs.hidden_field :advanced, value: true
+        .card.mb-2
+          .card-body.pb-2
+            .row
+              .col
+                = frs.select :name, scopes_collection, grouped: true, label: false
+              .col
+                - scopes.select { |scope, type| type.present? }.each do |scope, type|
+                  = frs.show_if(:name, scope) do
+                    = frs.hidden_field :advanced, value: true
 
-                - if type == :boolean
-                  = frs.select :value_boolean, boolean_collection, label: 'Value', required: true
-                - elsif type == :date
-                  = frs.date_field :value_date, label: 'Value', required: true
-                - elsif type == :integer
-                  = frs.integer_field :value_integer, label: 'Value', required: true
-                - elsif type == :price
-                  = frs.price_field :value_price, label: 'Value', required: true
-                - elsif type == :string
-                  = frs.text_field :value_string, label: 'Value', required: true
-                - else
-                  - raise("Unexpected scope datatype: #{type || 'nil'}")
+                    - if type == :boolean
+                      = frs.select :value_boolean, reportable_boolean_collection, label: 'Value', buttons: true, required: true, label: false
+                    - elsif type == :date
+                      = frs.date_field :value_date, label: 'Value', required: true, label: false
+                    - elsif type == :integer
+                      = frs.integer_field :value_integer, label: 'Value', required: true, label: false
+                    - elsif type == :price
+                      = frs.price_field :value_price, label: 'Value', required: true, label: false
+                    - elsif type == :string
+                      = frs.text_field :value_string, label: 'Value', required: true, label: false
+                    - else
+                      - raise("Unexpected scope datatype: #{type || 'nil'}")
 
   = effective_submit(f)

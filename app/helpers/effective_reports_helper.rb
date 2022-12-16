@@ -1,5 +1,9 @@
 module EffectiveReportsHelper
 
+  def reportable_boolean_collection
+    [['Yes', true], ['No', false]]
+  end
+
   def reportable_attributes_collection(attributes)
     attributes.keys.sort
   end
@@ -11,16 +15,30 @@ module EffectiveReportsHelper
     }
   end
 
-  # [:equals, :includes, :greater_than, :greater_than_or_equal_to, :less_than, :less_than_or_equal_to]
-  def reportable_operations_collection()
-    [
-      ['Equals =', :equals],
-      ['Includes *', :includes],
-      ['Greater than >', :greater_than],
-      ['Greater than or equal to >=', :greater_than_or_equal_to],
-      ['Less than <', :less_than],
-      ['Less than or equal to <', :less_than_or_equal_to],
-    ]
+  def reportable_operations_collection(type)
+    case type
+    when :boolean
+      [
+        ['Equals', :equals]
+      ]
+    when :string
+      [
+        ['Equals', :equals],
+        ['Includes', :includes],
+        ['Starts with', :starts_with],
+        ['Ends with', :ends_with]
+      ]
+    when :integer, :price, :date
+      [
+        ['Equals =', :equals],
+        ['Greater than >', :greater_than],
+        ['Greater than or equal to >=', :greater_than_or_equal_to],
+        ['Less than <', :less_than],
+        ['Less than or equal to <', :less_than_or_equal_to],
+      ]
+    else
+      raise("unexpected type: #{type || 'nil'}")
+    end
   end
 
 end

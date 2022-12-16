@@ -13,7 +13,7 @@ module Effective
     log_changes if respond_to?(:log_changes)
 
     DATATYPES = [:boolean, :date, :integer, :price, :string, :belongs_to]
-    OPERATIONS = [:equals, :includes, :greater_than, :greater_than_or_equal_to, :less_than, :less_than_or_equal_to]
+    OPERATIONS = [:equals, :includes, :starts_with, :ends_with, :greater_than, :greater_than_or_equal_to, :less_than, :less_than_or_equal_to]
 
     effective_resource do
       title                     :string

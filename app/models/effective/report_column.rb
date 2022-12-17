@@ -30,6 +30,10 @@ module Effective
       self.position ||= (report.report_columns.map(&:position).compact.max || -1) + 1
     end
 
+    before_validation(if: -> { filter? == false }) do
+      assign_attributes(operation: nil, value_boolean: nil, value_date: nil, value_integer: nil, value_price: nil, value_string: nil, value_belongs_to: nil)
+    end
+
     validates :name, presence: true
     validates :position, presence: true
 

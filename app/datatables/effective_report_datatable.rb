@@ -5,7 +5,7 @@ class EffectiveReportDatatable < Effective::Datatable
     skip_save_state!  # Forgets the previous show/hide columns settings
 
     report.report_columns.each do |column|
-      col(column.name, as: column.as.to_sym)
+      col(column.name, as: (column.as.to_sym unless column.as_associated?))
     end
 
   end

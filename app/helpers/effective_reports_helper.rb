@@ -5,7 +5,12 @@ module EffectiveReportsHelper
   end
 
   def reportable_attributes_collection(attributes)
-    attributes.keys.sort
+    macros = [:belongs_to, :has_many, :has_one]
+
+    {
+      'Attributes' => attributes.select { |_, type| macros.exclude?(type) }.map { |att, _| [att, att] }.sort,
+      'Associations' => attributes.select { |_, type| macros.include?(type) }.map { |att, _| [att, att] }.sort,
+    }
   end
 
   def reportable_scopes_collection(scopes)
@@ -40,8 +45,15 @@ module EffectiveReportsHelper
         ['Less than <', :lt],
         ['Less than or equal to <', :lteq],
       ]
+    when :belongs_to, :has_many, :has_one
+      [
+        ['ID(s) Equals =', :associated_ids],
+        ['Matches', :associated_matches],
+        ['Does Not Match', :associated_does_not_match],
+        ['SQL', :associated_sql],
+      ]
     else
-      raise("unexpected type: #{type || 'nil'}")
+      raise("unexpected reportable operations collection type: #{type || 'nil'}")
     end
   end
 

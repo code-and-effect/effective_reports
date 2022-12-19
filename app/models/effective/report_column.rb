@@ -3,7 +3,6 @@ module Effective
     self.table_name = EffectiveReports.report_columns_table_name.to_s
 
     belongs_to :report
-    belongs_to :value_belongs_to, polymorphic: true, optional: true
 
     log_changes(to: :report) if respond_to?(:log_changes)
 
@@ -15,12 +14,13 @@ module Effective
       filter          :boolean
       operation       :string
 
-      value_boolean   :boolean
-      value_date      :date
-      value_decimal   :decimal
-      value_integer   :integer
-      value_price     :integer
-      value_string    :string
+      value_associated  :text
+      value_boolean     :boolean
+      value_date        :date
+      value_decimal     :decimal
+      value_integer     :integer
+      value_price       :integer
+      value_string      :string
 
       timestamps
     end
@@ -33,7 +33,7 @@ module Effective
     end
 
     before_validation(if: -> { filter? == false }) do
-      assign_attributes(operation: nil, value_boolean: nil, value_date: nil, value_decimal: nil, value_integer: nil, value_price: nil, value_string: nil, value_belongs_to: nil)
+      assign_attributes(operation: nil, value_associated: nil, value_boolean: nil, value_date: nil, value_decimal: nil, value_integer: nil, value_price: nil, value_string: nil)
     end
 
     validates :name, presence: true
@@ -48,7 +48,7 @@ module Effective
         self.errors.add(:value_integer, "can't be blank")
         self.errors.add(:value_price, "can't be blank")
         self.errors.add(:value_string, "can't be blank")
-        self.errors.add(:value_belongs_to_id, "can't be blank")
+        self.errors.add(:value_associated, "can't be blank")
         self.errors.add(:value_boolean, "can't be blank")
       end
     end
@@ -57,8 +57,12 @@ module Effective
       name.presence || 'report column'
     end
 
+    def as_associated?
+      [:belongs_to, :has_many, :has_one].include?(as.to_sym)
+    end
+
     def value
-      value_date || value_decimal || value_integer || value_price || value_string.presence || value_belongs_to || value_boolean
+      value_date || value_decimal || value_integer || value_price || value_string.presence || value_associated.presence || value_boolean
     end
 
   end

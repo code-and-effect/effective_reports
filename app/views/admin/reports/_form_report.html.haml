@@ -21,6 +21,10 @@
     - value_prices = attributes.select { |_, type| type == :price }.keys
     - value_strings = attributes.select { |_, type| type == :string }.keys
 
+    - value_belong_tos = attributes.select { |_, type| type == :belongs_to }.keys
+    - value_has_manys = attributes.select { |_, type| type == :has_many }.keys
+    - value_has_ones = attributes.select { |_, type| type == :has_one }.keys
+
     -# Scopes
     - scopes = f.object.reportable_scopes
     - scopes_collection = reportable_scopes_collection(scopes)
@@ -33,7 +37,7 @@
           .card-body.pb-2
             .row
               .col-md-4
-                = frc.select :name, attributes_collection, required: false, label: false
+                = frc.select :name, attributes_collection, grouped: true, required: false, label: false
               .col
                 = frc.show_if_any(:name, value_booleans) do
 
@@ -107,6 +111,42 @@
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
                       = frc.text_field :value_string, label: false
+
+                = frc.show_if_any(:name, value_belong_tos) do
+                  .row
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :belongs_to
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:belongs_to), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.text_field :value_associated, label: false
+
+                = frc.show_if_any(:name, value_has_manys) do
+                  .row
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :has_many
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:has_many), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.text_field :value_associated, label: false
+
+                = frc.show_if_any(:name, value_has_ones) do
+                  .row
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :has_one
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:has_one), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.text_field :value_associated, label: false
 
     - if scopes.present?
       %h2 Report Scopes

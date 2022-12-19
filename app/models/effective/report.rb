@@ -12,13 +12,13 @@ module Effective
 
     log_changes if respond_to?(:log_changes)
 
-    DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to]
+    DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to, :has_many, :has_one]
 
     # Arel::Predications.instance_methods
-    OPERATIONS = [:eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq]
-
-    # Display these as price fields
-    PRICE_ATTRIBUTES = [:price, :subtotal, :tax, :total, :current_revenue, :current_revenue_subtotal, :current_revenue_tax, :deferred_revenue, :deferred_revenue_subtotal, :deferred_revenue_tax, :amount_owing, :surcharge]
+    OPERATIONS = [
+      :eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq,
+      :associated_ids, :associated_matches, :associated_does_not_match, :associated_sql
+    ]
 
     effective_resource do
       title                     :string
@@ -49,11 +49,6 @@ module Effective
       attributes.each do |attribute, type|
         raise("#{reportable}.reportable_attributes #{attribute} => #{type || 'nil'} is invalid. Key must be a symbol") unless attribute.kind_of?(Symbol)
         raise("#{reportable}.reportable_attributes :#{attribute} => #{type || 'nil'} is invalid. Value must be one of #{DATATYPES.map { |s| ":#{s}"}.join(', ')}") unless DATATYPES.include?(type)
-      end
-
-      # Update some attributes to be type price
-      attributes.each do |attribute, type|
-        attributes[attribute] = :price if type == :integer && PRICE_ATTRIBUTES.include?(attribute)
       end
 
       attributes
@@ -92,6 +87,11 @@ module Effective
         collection = (scope.value.nil? ? collection.send(scope.name) : collection.send(scope.name, scope.value))
       end
 
+      # Apply Includes
+      report_columns.select(&:as_associated?).each do |column|
+        collection = collection.includes(column.name)
+      end
+
       # Apply Attributes
       report_columns.select(&:filter?).each do |column|
         attribute = collection.arel_table[column.name]
@@ -107,8 +107,55 @@ module Effective
           when :gteq then collection.where(attribute.gteq(column.value))
           when :lt then collection.where(attribute.lt(column.value))
           when :lteq then collection.where(attribute.lteq(column.value))
+          when :associated_ids then search_associated(collection, column)
+          when :associated_sql then search_associated(collection, column)
+          when :associated_matches then search_associated(collection, column)
+          when :associated_does_not_match then search_associated(collection, column)
           else raise("Unexpected operation: #{operation}")
         end
+      end
+
+      collection
+    end
+
+    def search_associated(collection, column)
+      name = column.name.to_sym
+      operation = column.operation.to_sym
+
+      value = column.value.to_s
+      value_ids = (value.split(/,|\s|\|/) - [nil, '', ' '])
+      value_sql = Arel.sql(value)
+
+      reflection = collection.klass.reflect_on_all_associations.find { |reflection| reflection.name == name }
+      raise("expected to find #{collection.klass.name} reflection on #{name}") unless reflection
+
+      foreign_id = reflection.foreign_key
+      foreign_type = reflection.foreign_key.to_s.chomp('_id') + '_type'
+      foreign_collection = reflection.klass.all
+      foreign_collection = reflection.klass.where(foreign_type => collection.klass.name) if reflection.klass.new.respond_to?(foreign_type)
+
+      case reflection
+      when ActiveRecord::Reflection::BelongsToReflection
+        raise('not yet')
+      when ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::HasOneReflection
+        case operation
+        when :associated_ids
+          associated = foreign_collection.where(id: value_ids)
+          collection = collection.where(id: associated.select(foreign_id))
+        when :associated_matches
+          associated = Resource.new(foreign_collection).search_any(value)
+          collection = collection.where(id: associated.select(foreign_id))
+        when :associated_does_not_match
+          associated = Resource.new(foreign_collection).search_any(value)
+          collection = collection.where.not(id: associated.select(foreign_id))
+        when :associated_sql
+          if (foreign_collection.where(value_sql).present? rescue :invalid) != :invalid
+            associated = foreign_collection.where(value_sql)
+            collection = collection.where(id: associated.select(foreign_id))
+          end
+        end
+      else
+        raise("unsupported reflection: #{reflection}")
       end
 
       collection

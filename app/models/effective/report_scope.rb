@@ -32,7 +32,6 @@ module Effective
         self.errors.add(:value_integer, "can't be blank")
         self.errors.add(:value_price, "can't be blank")
         self.errors.add(:value_string, "can't be blank")
-        self.errors.add(:value_belongs_to_id, "can't be blank")
         self.errors.add(:value_boolean, "can't be blank")
       end
     end

@@ -12,10 +12,13 @@ module Effective
 
     log_changes if respond_to?(:log_changes)
 
-    DATATYPES = [:boolean, :date, :integer, :price, :string, :belongs_to]
+    DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to]
 
     # Arel::Predications.instance_methods
     OPERATIONS = [:eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq]
+
+    # Display these as price fields
+    PRICE_ATTRIBUTES = [:price, :subtotal, :tax, :total, :current_revenue, :current_revenue_subtotal, :current_revenue_tax, :deferred_revenue, :deferred_revenue_subtotal, :deferred_revenue_tax, :amount_owing, :surcharge]
 
     effective_resource do
       title                     :string
@@ -46,6 +49,11 @@ module Effective
       attributes.each do |attribute, type|
         raise("#{reportable}.reportable_attributes #{attribute} => #{type || 'nil'} is invalid. Key must be a symbol") unless attribute.kind_of?(Symbol)
         raise("#{reportable}.reportable_attributes :#{attribute} => #{type || 'nil'} is invalid. Value must be one of #{DATATYPES.map { |s| ":#{s}"}.join(', ')}") unless DATATYPES.include?(type)
+      end
+
+      # Update some attributes to be type price
+      attributes.each do |attribute, type|
+        attributes[attribute] = :price if type == :integer && PRICE_ATTRIBUTES.include?(attribute)
       end
 
       attributes
@@ -81,11 +89,7 @@ module Effective
 
       # Apply Scopes
       report_scopes.each do |scope|
-        collection = if !scope.value.nil?
-          collection.send(scope.name, scope.value)
-        else
-          collection.send(scope.name)
-        end
+        collection = (scope.value.nil? ? collection.send(scope.name) : collection.send(scope.name, scope.value))
       end
 
       # Apply Attributes

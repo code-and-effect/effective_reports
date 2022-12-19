@@ -8,17 +8,19 @@ module Effective
     log_changes(to: :report) if respond_to?(:log_changes)
 
     effective_resource do
-      name          :string
-      position      :integer
+      name            :string
+      as              :string
+      position        :integer
 
-      filter         :boolean
-      operation      :string
+      filter          :boolean
+      operation       :string
 
-      value_boolean  :boolean
-      value_date     :date
-      value_integer  :integer
-      value_price    :integer
-      value_string   :string
+      value_boolean   :boolean
+      value_date      :date
+      value_decimal   :decimal
+      value_integer   :integer
+      value_price     :integer
+      value_string    :string
 
       timestamps
     end
@@ -31,16 +33,18 @@ module Effective
     end
 
     before_validation(if: -> { filter? == false }) do
-      assign_attributes(operation: nil, value_boolean: nil, value_date: nil, value_integer: nil, value_price: nil, value_string: nil, value_belongs_to: nil)
+      assign_attributes(operation: nil, value_boolean: nil, value_date: nil, value_decimal: nil, value_integer: nil, value_price: nil, value_string: nil, value_belongs_to: nil)
     end
 
     validates :name, presence: true
+    validates :as, presence: true, inclusion: { in: Report::DATATYPES }
     validates :position, presence: true
     validates :operation, presence: true, if: -> { filter? }
 
     validate(if: -> { filter? }) do
       if value.blank? && (value != false)
         self.errors.add(:value_date, "can't be blank")
+        self.errors.add(:value_decimal, "can't be blank")
         self.errors.add(:value_integer, "can't be blank")
         self.errors.add(:value_price, "can't be blank")
         self.errors.add(:value_string, "can't be blank")
@@ -54,7 +58,7 @@ module Effective
     end
 
     def value
-      value_date || value_integer || value_price || value_string.presence || value_belongs_to || value_boolean
+      value_date || value_decimal || value_integer || value_price || value_string.presence || value_belongs_to || value_boolean
     end
 
   end

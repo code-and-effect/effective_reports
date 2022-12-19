@@ -16,6 +16,7 @@
 
     - value_booleans = attributes.select { |_, type| type == :boolean }.keys
     - value_dates = attributes.select { |_, type| type == :date }.keys
+    - value_decimals = attributes.select { |_, type| type == :decimal }.keys
     - value_integers = attributes.select { |_, type| type == :integer }.keys
     - value_prices = attributes.select { |_, type| type == :price }.keys
     - value_strings = attributes.select { |_, type| type == :string }.keys
@@ -35,34 +36,77 @@
                 = frc.select :name, attributes_collection, required: false, label: false
               .col
                 = frc.show_if_any(:name, value_booleans) do
+
                   .row
-                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
-                    .col= frc.select :operation, reportable_operations_collection(:boolean), label: false
-                    .col= frc.radios :value_boolean, reportable_boolean_collection, label: false, buttons: true
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :boolean
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:boolean), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.radios :value_boolean, reportable_boolean_collection, label: false, buttons: true
 
                 = frc.show_if_any(:name, value_dates) do
                   .row
-                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
-                    .col= frc.select :operation, reportable_operations_collection(:date), label: false
-                    .col= frc.date_field :value_date, label: false
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :date
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:date), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.date_field :value_date, label: false
+
+                = frc.show_if_any(:name, value_decimals) do
+                  .row
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :decimal
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:decimal), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.float_field :value_decimal, label: false
 
                 = frc.show_if_any(:name, value_integers) do
                   .row
-                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
-                    .col= frc.select :operation, reportable_operations_collection(:integer), label: false
-                    .col= frc.integer_field :value_integer, label: false
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :integer
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:integer), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.integer_field :value_integer, label: false
 
                 = frc.show_if_any(:name, value_prices) do
                   .row
-                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
-                    .col= frc.select :operation, reportable_operations_collection(:price), label: false
-                    .col= frc.price_field :value_price, label: false
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :price
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:price), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.price_field :value_price, label: false
 
                 = frc.show_if_any(:name, value_strings) do
                   .row
-                    .col.mt-2= frc.check_box :filter, label: 'Filter by this column'
-                    .col= frc.select :operation, reportable_operations_collection(:string), label: false
-                    .col= frc.text_field :value_string, label: false
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :string
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:string), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.text_field :value_string, label: false
 
     - if scopes.present?
       %h2 Report Scopes
@@ -82,6 +126,8 @@
                       = frs.radios :value_boolean, reportable_boolean_collection, label: 'Value', buttons: true, required: true, label: false
                     - elsif type == :date
                       = frs.date_field :value_date, label: 'Value', required: true, label: false
+                    - elsif type == :decimal
+                      = frs.date_field :value_decimal, label: 'Value', required: true, label: false
                     - elsif type == :integer
                       = frs.integer_field :value_integer, label: 'Value', required: true, label: false
                     - elsif type == :price

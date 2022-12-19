@@ -8,11 +8,11 @@ module Effective
 
     effective_resource do
       name          :string
-
       advanced      :boolean      # The scope is a 0 arity symbol when false, or a 1 arity hash when true
 
       value_boolean  :boolean
       value_date     :date
+      value_decimal  :decimal
       value_integer  :integer
       value_price    :integer
       value_string   :string
@@ -26,7 +26,15 @@ module Effective
     validates :name, presence: true
 
     validate(if: -> { advanced? }) do
-      self.errors.add(:name, 'advanced scopes must include a value') unless value.present? || (value == false)
+      if value.blank? && (value != false)
+        self.errors.add(:value_date, "can't be blank")
+        self.errors.add(:value_decimal, "can't be blank")
+        self.errors.add(:value_integer, "can't be blank")
+        self.errors.add(:value_price, "can't be blank")
+        self.errors.add(:value_string, "can't be blank")
+        self.errors.add(:value_belongs_to_id, "can't be blank")
+        self.errors.add(:value_boolean, "can't be blank")
+      end
     end
 
     def to_s
@@ -34,7 +42,7 @@ module Effective
     end
 
     def value
-      value_date || value_integer || value_price || value_string.presence || value_boolean
+      value_date || value_decimal || value_integer || value_price || value_string.presence || value_boolean
     end
 
   end

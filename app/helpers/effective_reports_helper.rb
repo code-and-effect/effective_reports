@@ -31,7 +31,7 @@ module EffectiveReportsHelper
         ['Starts with', :starts_with],
         ['Ends with', :ends_with]
       ]
-    when :integer, :price, :date
+    when :integer, :price, :date, :decimal
       [
         ['Equals =', :eq],
         ['Does Not Equal !=', :not_eq],

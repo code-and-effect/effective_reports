@@ -5,7 +5,7 @@ class EffectiveReportDatatable < Effective::Datatable
   datatable do
 
     report.report_columns.each do |column|
-      col(column.name)
+      col(column.name, as: column.as.to_sym)
     end
 
   end

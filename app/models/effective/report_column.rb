@@ -36,10 +36,17 @@ module Effective
 
     validates :name, presence: true
     validates :position, presence: true
+    validates :operation, presence: true, if: -> { filter? }
 
     validate(if: -> { filter? }) do
-      self.errors.add(:name, 'filtered columns must include a value') unless value.present? || (value == false)
-      self.errors.add(:operation, "can't be blank") unless operation.present?
+      if value.blank? && (value != false)
+        self.errors.add(:value_date, "can't be blank")
+        self.errors.add(:value_integer, "can't be blank")
+        self.errors.add(:value_price, "can't be blank")
+        self.errors.add(:value_string, "can't be blank")
+        self.errors.add(:value_belongs_to_id, "can't be blank")
+        self.errors.add(:value_boolean, "can't be blank")
+      end
     end
 
     def to_s

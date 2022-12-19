@@ -32,7 +32,7 @@
           .card-body.pb-2
             .row
               .col-md-4
-                = frc.select :name, attributes_collection, label: false
+                = frc.select :name, attributes_collection, required: false, label: false
               .col
                 = frc.show_if_any(:name, value_booleans) do
                   .row
@@ -72,7 +72,7 @@
           .card-body.pb-2
             .row
               .col
-                = frs.select :name, scopes_collection, grouped: true, label: false
+                = frs.select :name, scopes_collection, grouped: true, required: false, label: false
               .col
                 - scopes.select { |scope, type| type.present? }.each do |scope, type|
                   = frs.show_if(:name, scope) do

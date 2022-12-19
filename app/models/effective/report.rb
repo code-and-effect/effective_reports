@@ -127,7 +127,10 @@ module Effective
       value_sql = Arel.sql(value)
 
       reflection = collection.klass.reflect_on_all_associations.find { |reflection| reflection.name == name }
-      raise("expected to find #{collection.klass.name} reflection on #{name}") unless reflection
+      raise("expected to find #{collection.klass.name} #{name} reflection") unless reflection
+
+      # TODO Support this
+      return collection if reflection.options[:polymorphic]
 
       foreign_id = reflection.foreign_key
       foreign_type = reflection.foreign_key.to_s.chomp('_id') + '_type'
@@ -136,7 +139,22 @@ module Effective
 
       case reflection
       when ActiveRecord::Reflection::BelongsToReflection
-        raise('not yet')
+        case operation
+        when :associated_ids
+          associated = foreign_collection.where(id: value_ids)
+          collection = collection.where(foreign_id => associated)
+        when :associated_matches
+          associated = Resource.new(foreign_collection).search_any(value)
+          collection = collection.where(foreign_id => associated)
+        when :associated_does_not_match
+          associated = Resource.new(foreign_collection).search_any(value)
+          collection = collection.where.not(foreign_id => associated)
+        when :associated_sql
+          if (foreign_collection.where(value_sql).present? rescue :invalid) != :invalid
+            associated = foreign_collection.where(value_sql)
+            collection = collection.where(foreign_id => associated)
+          end
+        end
       when ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::HasOneReflection
         case operation
         when :associated_ids

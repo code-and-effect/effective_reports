@@ -37,7 +37,7 @@ module Effective
     end
 
     validates :name, presence: true
-    validates :as, presence: true, inclusion: { in: Report::DATATYPES }
+    validates :as, presence: true, inclusion: { in: Report::DATATYPES.map(&:to_s) }
     validates :position, presence: true
     validates :operation, presence: true, if: -> { filter? }
 

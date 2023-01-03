@@ -142,17 +142,17 @@ module Effective
         case operation
         when :associated_ids
           associated = foreign_collection.where(id: value_ids)
-          collection = collection.where(foreign_id => associated)
+          collection = collection.where(foreign_id => associated.select(:id))
         when :associated_matches
           associated = Resource.new(foreign_collection).search_any(value)
-          collection = collection.where(foreign_id => associated)
+          collection = collection.where(foreign_id => associated.select(:id))
         when :associated_does_not_match
           associated = Resource.new(foreign_collection).search_any(value)
-          collection = collection.where.not(foreign_id => associated)
+          collection = collection.where.not(foreign_id => associated.select(:id))
         when :associated_sql
           if (foreign_collection.where(value_sql).present? rescue :invalid) != :invalid
             associated = foreign_collection.where(value_sql)
-            collection = collection.where(foreign_id => associated)
+            collection = collection.where(foreign_id => associated.select(:id))
           end
         end
       when ActiveRecord::Reflection::HasManyReflection, ActiveRecord::Reflection::HasOneReflection

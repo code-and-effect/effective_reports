@@ -5,7 +5,7 @@ module EffectiveReportsHelper
   end
 
   def reportable_attributes_collection(attributes)
-    macros = [:belongs_to, :has_many, :has_one]
+    macros = [:belongs_to, :belongs_to_polymorphic, :has_many, :has_one]
 
     {
       'Attributes' => attributes.select { |_, type| macros.exclude?(type) }.map { |att, _| [att, att] }.sort,
@@ -44,6 +44,10 @@ module EffectiveReportsHelper
         ['Greater than or equal to >=', :gteq],
         ['Less than <', :lt],
         ['Less than or equal to <', :lteq],
+      ]
+    when :belongs_to_polymorphic
+      [
+        ['Matches', :associated_matches],
       ]
     when :belongs_to, :has_many, :has_one
       [

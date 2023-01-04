@@ -52,11 +52,17 @@ module ActsAsReportable
     associated = reflections.inject({}) do |h, reflection|
       case reflection
       when ActiveRecord::Reflection::BelongsToReflection
-        h[reflection.name.to_sym] = :belongs_to unless reflection.options[:polymorphic]
+        if reflection.options[:polymorphic]
+          h[reflection.name.to_sym] = :belongs_to_polymorphic
+        else
+          h[reflection.name.to_sym] = :belongs_to
+        end
       when ActiveRecord::Reflection::HasManyReflection
         h[reflection.name.to_sym] = :has_many
       when ActiveRecord::Reflection::HasOneReflection
         h[reflection.name.to_sym] = :has_one
+      when ActiveRecord::Reflection::ThroughReflection
+        h[reflection.name.to_sym] = :has_many
       end; h
     end
 

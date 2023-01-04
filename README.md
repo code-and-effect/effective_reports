@@ -13,7 +13,6 @@ Please download and install the [Twitter Bootstrap4](http://getbootstrap.com)
 Add to your Gemfile:
 
 ```ruby
-gem 'haml-rails' # or try using gem 'hamlit-rails'
 gem 'effective_reports'
 ```
 
@@ -42,6 +41,12 @@ rake db:migrate
 Please add the following to your User model:
 
 ```
+acts_as_reportable
+
+# { active: nil, inactive: nil, with_first_name: :string, not_in_good_standing: :boolean }
+def reportable_scopes
+  {}
+end
 ```
 
 and

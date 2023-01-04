@@ -22,6 +22,7 @@
     - value_strings = attributes.select { |_, type| type == :string }.keys
 
     - value_belong_tos = attributes.select { |_, type| type == :belongs_to }.keys
+    - value_belong_to_polymorphics = attributes.select { |_, type| type == :belongs_to_polymorphic }.keys
     - value_has_manys = attributes.select { |_, type| type == :has_many }.keys
     - value_has_ones = attributes.select { |_, type| type == :has_one }.keys
 
@@ -123,6 +124,19 @@
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
                       = frc.text_field :value_associated, label: false
+
+                = frc.show_if_any(:name, value_belong_to_polymorphics) do
+                  .row
+                    .col.mt-2
+                      = frc.check_box :filter, label: 'Filter by this column'
+                      = frc.hidden_field :as, value: :belongs_to_polymorphic
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.select :operation, reportable_operations_collection(:belongs_to_polymorphic), label: false
+
+                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                      = frc.text_field :value_associated, label: false
+
 
                 = frc.show_if_any(:name, value_has_manys) do
                   .row

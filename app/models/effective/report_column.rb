@@ -58,7 +58,7 @@ module Effective
     end
 
     def as_associated?
-      [:belongs_to, :has_many, :has_one].include?(as.to_sym)
+      [:belongs_to, :belongs_to_polymorphic, :has_many, :has_one].include?(as.to_sym)
     end
 
     def value

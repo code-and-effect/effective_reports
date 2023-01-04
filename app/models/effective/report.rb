@@ -38,6 +38,10 @@ module Effective
       reportable_class_name.constantize if reportable_class_name.present?
     end
 
+    def filtered_report_columns
+      report_columns.select(&:filter?)
+    end
+
     # Used to build the Reports form
     # { id: :integer, archived: :boolean }
     def reportable_attributes

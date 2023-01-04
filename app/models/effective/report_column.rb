@@ -54,7 +54,7 @@ module Effective
     end
 
     def to_s
-      name.presence || 'report column'
+      [name, operation_label, value].compact.join(' ').presence || 'report column'
     end
 
     def as_associated?
@@ -63,6 +63,26 @@ module Effective
 
     def value
       value_date || value_decimal || value_integer || value_price || value_string.presence || value_associated.presence || value_boolean
+    end
+
+    def operation_label
+      return unless operation.present?
+
+      case operation.to_sym
+      when :eq then '='
+      when :not_eq then '!='
+      when :matches then '~='
+      when :does_not_match then '!~='
+      when :starts_with then 'starts with'
+      when :ends_with then 'ends with'
+      when :gt then '>'
+      when :gteq then '>='
+      when :lt then '<'
+      when :lteq then '<='
+      when :sql then 'sql'
+      else
+        raise("unexpected operation: #{operation}")
+      end
     end
 
   end

@@ -5,18 +5,18 @@ module Admin
       order :id
       col :id, visible: false
 
-      col :created_at
-      col :created_by
+      col :created_at, visible: false
+      col :created_by, visible: false
 
       col :title
       col :description
 
-      col :reportable_class_name, label: 'Resource', search: EffectiveReports.reportable_classes.map(&:to_s)
+      col :reportable_class_name, label: 'Resource', search: EffectiveReports.reportable_classes.map(&:to_s), visible: false
 
-      col :report_columns, label: 'Columns'
-      col :report_scopes, label: 'Scopes'
+      col :report_columns, label: 'Columns', visible: false
+      col :report_scopes, label: 'Scopes', visible: false
 
-      col(:rows_count, visible: false) do |report|
+      col(:current_rows_count) do |report|
         report.collection().count
       end
 

@@ -4,6 +4,10 @@ class EffectiveReportDatatable < Effective::Datatable
   datatable do
     skip_save_state!  # Forgets the previous show/hide columns settings
 
+    order :id, :desc
+
+    col :id, visible: false
+
     report.report_columns.each do |column|
       col(column.name, as: column.as.to_sym)
     end

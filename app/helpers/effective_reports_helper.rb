@@ -45,16 +45,12 @@ module EffectiveReportsHelper
         ['Less than <', :lt],
         ['Less than or equal to <', :lteq],
       ]
-    when :belongs_to_polymorphic
+    when :belongs_to, :belongs_to_polymorphic, :has_many, :has_one
       [
-        ['Matches', :associated_matches],
-      ]
-    when :belongs_to, :has_many, :has_one
-      [
-        ['ID(s) Equals =', :associated_ids],
-        ['Matches', :associated_matches],
-        ['Does Not Match', :associated_does_not_match],
-        ['SQL', :associated_sql],
+        ['ID(s) Equals =', :eq],
+        ['Matches', :matches],
+        ['Does Not Match', :does_not_match],
+        ['SQL', :sql],
       ]
     else
       raise("unexpected reportable operations collection type: #{type || 'nil'}")

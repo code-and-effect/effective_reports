@@ -15,10 +15,7 @@ module Effective
     DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to, :belongs_to_polymorphic, :has_many, :has_one]
 
     # Arel::Predications.instance_methods
-    OPERATIONS = [
-      :eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq,
-      :associated_ids, :associated_matches, :associated_does_not_match, :associated_sql
-    ]
+    OPERATIONS = [:eq, :not_eq, :matches, :does_not_match, :starts_with, :ends_with, :gt, :gteq, :lt, :lteq, :sql]
 
     effective_resource do
       title                     :string
@@ -66,17 +63,6 @@ module Effective
 
       scopes
     end
-
-    # Replace the report_columns entirely
-    # def report_columns_attributes=(atts)
-    #   report_columns.clear
-    #   super(EffectiveResources.replace_nested_attributes(atts))
-    # end
-
-    # def report_scopes_attributes=(atts)
-    #   report_scopes.clear
-    #   super(EffectiveResources.replace_nested_attributes(atts))
-    # end
 
     # The klass to base the collection from
     def collection

@@ -177,17 +177,17 @@
                     = frs.hidden_field :advanced, value: true
 
                     - if type == :boolean
-                      = frs.radios :value_boolean, reportable_boolean_collection, label: 'Value', buttons: true, required: true, label: false
+                      = frs.radios :value_boolean, reportable_boolean_collection, buttons: true, required: true, label: false
                     - elsif type == :date
-                      = frs.date_field :value_date, label: 'Value', required: true, label: false
+                      = frs.date_field :value_date, required: true, label: false
                     - elsif type == :decimal
-                      = frs.date_field :value_decimal, label: 'Value', required: true, label: false
+                      = frs.date_field :value_decimal, required: true, label: false
                     - elsif type == :integer
-                      = frs.integer_field :value_integer, label: 'Value', required: true, label: false
+                      = frs.integer_field :value_integer, required: true, label: false
                     - elsif type == :price
-                      = frs.price_field :value_price, label: 'Value', required: true, label: false
+                      = frs.price_field :value_price, required: true, label: false
                     - elsif type == :string
-                      = frs.text_field :value_string, label: 'Value', required: true, label: false
+                      = frs.text_field :value_string, required: true, label: false
                     - else
                       - raise("Unexpected scope datatype: #{type || 'nil'}")
 

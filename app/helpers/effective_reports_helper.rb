@@ -43,7 +43,7 @@ module EffectiveReportsHelper
         ['Greater than >', :gt],
         ['Greater than or equal to >=', :gteq],
         ['Less than <', :lt],
-        ['Less than or equal to <', :lteq],
+        ['Less than or equal to <=', :lteq],
       ]
     when :belongs_to, :belongs_to_polymorphic, :has_many, :has_one
       [

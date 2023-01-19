@@ -37,11 +37,15 @@ module Effective
     end
 
     def to_s
-      name.presence || 'report scope'
+      [name, operation_label, value].compact.join(' ').presence || 'report scope'
     end
 
     def value
       value_date || value_decimal || value_integer || value_price || value_string.presence || value_boolean
+    end
+
+    def operation_label
+      return '=' if advanced?
     end
 
   end

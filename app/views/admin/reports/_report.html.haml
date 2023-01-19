@@ -1,5 +1,5 @@
 - if report.description.present?
-  %p= report.description.to_s
+  %p= simple_format(report.description)
 
 - if report.filtered_report_columns.present? || report.report_scopes.present?
   %p The results of this report have been filtered by the following:

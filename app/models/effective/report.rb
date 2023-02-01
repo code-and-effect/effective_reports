@@ -26,6 +26,7 @@ module Effective
 
     scope :deep, -> { includes(:report_columns, :report_scopes) }
     scope :sorted, -> { order(:title) }
+    scope :emails, -> { where(id: ReportColumn.emails.select(:report_id)) }
 
     validates :title, presence: true, uniqueness: true
     validates :reportable_class_name, presence: true
@@ -40,6 +41,10 @@ module Effective
 
     def filtered_report_columns
       report_columns.select(&:filter?)
+    end
+
+    def email_report_column
+      report_columns.find { |column| column.name.include?('email') }
     end
 
     # Used to build the Reports form

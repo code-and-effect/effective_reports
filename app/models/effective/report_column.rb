@@ -27,6 +27,7 @@ module Effective
 
     scope :deep, -> { includes(:report) }
     scope :sorted, -> { order(:position) }
+    scope :emails, -> { where('name ILIKE ?', "%email%") }
 
     before_validation(if: -> { report.present? }) do
       self.position ||= (report.report_columns.map(&:position).compact.max || -1) + 1
@@ -55,6 +56,25 @@ module Effective
 
     def to_s
       [name, operation_label, value].compact.join(' ').presence || 'report column'
+    end
+
+    def format(value)
+      return '' if value.blank?
+
+      case as.to_sym
+      when :boolean then value.to_s
+      when :date then value.strftime('%F')
+      when :decimal then value.to_s
+      when :integer then value.to_s
+      when :price then '$' + ('%0.2f' % (value / 100.0))
+      when :string then value.to_s
+      when :belongs_to then value.to_s
+      when :belongs_to_polymorphic then value.to_s
+      when :has_many then Array(value).map { |value| value.to_s }.join("\n\n")
+      when :has_one then value.to_s
+      else
+        raise("unexpected as: #{as || 'nil'}")
+      end
     end
 
     def as_associated?

@@ -2,7 +2,7 @@ module Effective
   class Report < ActiveRecord::Base
     self.table_name = EffectiveReports.reports_table_name.to_s
 
-    belongs_to :created_by, polymorphic: true
+    belongs_to :created_by, polymorphic: true, optional: true
 
     has_many :report_columns, -> { ReportColumn.sorted }, inverse_of: :report, dependent: :delete_all
     accepts_nested_attributes_for :report_columns, allow_destroy: true, reject_if: proc { |atts| atts['name'].blank? }
@@ -44,7 +44,7 @@ module Effective
     end
 
     def email_report_column
-      report_columns.find { |column| column.name.include?('email') }
+      report_columns.find { |column| column.name == 'email' } || report_columns.find { |column| column.name.include?('email') }
     end
 
     # Used to build the Reports form

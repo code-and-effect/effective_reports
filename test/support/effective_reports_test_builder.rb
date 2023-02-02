@@ -1,5 +1,17 @@
 module EffectiveReportsTestBuilder
 
+  def build_report
+    user = build_user()
+
+    report = Effective::Report.new(title: 'Test Report', reportable_class_name: 'User')
+
+    user.reportable_attributes.slice(:email, :first_name, :last_name).each do |name, as|
+      report.report_columns.build(name: name, as: as)
+    end
+
+    report
+  end
+
   def create_user!
     build_user.tap { |user| user.save! }
   end

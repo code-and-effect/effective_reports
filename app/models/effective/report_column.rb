@@ -55,7 +55,7 @@ module Effective
     end
 
     def to_s
-      [name, operation_label, value].compact.join(' ').presence || 'report column'
+      [name, operation_label, value, days_label].compact.join(' ').presence || 'report column'
     end
 
     def format(value)
@@ -63,7 +63,7 @@ module Effective
 
       case as.to_sym
       when :boolean then value.to_s
-      when :date then value.strftime('%F')
+      when :date then value.try(:strftime, '%F') || value.to_s
       when :decimal then value.to_s
       when :integer then value.to_s
       when :price then '$' + ('%0.2f' % (value / 100.0))
@@ -77,11 +77,21 @@ module Effective
       end
     end
 
+    # Days Since functionality
+    def days_filter?
+      as == 'date' && operation.to_s.include?('days')
+    end
+
+    def date_filter?
+      as == 'date' && operation.to_s.exclude?('days')
+    end
+
     def as_associated?
       [:belongs_to, :belongs_to_polymorphic, :has_many, :has_one].include?(as.to_sym)
     end
 
     def value
+      return value_integer if days_filter?
       value_date || value_decimal || value_integer || value_price || value_string.presence || value_associated.presence || value_boolean
     end
 
@@ -100,8 +110,21 @@ module Effective
       when :lt then '<'
       when :lteq then '<='
       when :sql then 'sql'
+      when :days_ago_eq then '='
+      when :days_ago_gteq then '>='
+      when :days_ago_lteq then '<='
       else
         raise("unexpected operation: #{operation}")
+      end
+    end
+
+    def days_label
+      case operation.to_sym
+      when :days_ago_eq then 'days ago'
+      when :days_ago_gteq then 'days ago'
+      when :days_ago_lteq then 'days ago'
+      else
+        ''
       end
     end
 

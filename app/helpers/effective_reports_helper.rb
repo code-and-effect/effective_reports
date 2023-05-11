@@ -36,7 +36,19 @@ module EffectiveReportsHelper
         ['Starts with', :starts_with],
         ['Ends with', :ends_with]
       ]
-    when :integer, :price, :date, :decimal
+    when :date
+      [
+        ['Days ago Equals =', :days_ago_eq],
+        ['Days ago Greater than or equal to >=', :days_ago_gteq],
+        ['Days ago Less than or equal to <=', :days_ago_lteq],
+        ['Date Equals =', :eq],
+        ['Date Does Not Equal !=', :not_eq],
+        ['Date Greater than >', :gt],
+        ['Date Greater than or equal to >=', :gteq],
+        ['Date Less than <', :lt],
+        ['Date Less than or equal to <=', :lteq],
+      ]
+    when :integer, :price, :decimal
       [
         ['Equals =', :eq],
         ['Does Not Equal !=', :not_eq],

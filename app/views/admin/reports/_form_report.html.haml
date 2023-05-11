@@ -60,10 +60,13 @@
                       = frc.hidden_field :as, value: :date
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
-                      = frc.select :operation, reportable_operations_collection(:date), label: false
+                      = frc.select :operation, reportable_operations_collection(:date), label: false, 'data-effective-reports-date-operation': true
 
-                    .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
+                    .col.effective-report-filter.effective-report-date-filter{style: ('display: none;' unless frc.object.filter? && frc.object.date_filter?)}
                       = frc.date_field :value_date, label: false
+
+                    .col.effective-report-filter.effective-report-days-filter{style: ('display: none;' unless frc.object.filter? && frc.object.days_filter?)}
+                      = frc.integer_field :value_integer, label: false
 
                 = frc.show_if_any(:name, value_decimals) do
                   .row

@@ -67,7 +67,7 @@ module Effective
       scopes.each do |scope, type|
         raise("#{reportable}.reportable_scopes #{scope} => #{type || 'nil'} is invalid. Key must be a symbol") unless scope.kind_of?(Symbol)
         raise("#{reportable}.reportable_scopes :#{scope} => #{type || 'nil'} is invalid. Value must be one of #{DATATYPES.map { |s| ":#{s}"}.join(', ')}") if type.present? && !DATATYPES.include?(type)
-        raise("#{reportable} must respond to reportable scope :#{name}") unless reportable.respond_to?(scope)
+        raise("#{reportable} must respond to reportable scope :#{scope}") unless reportable.respond_to?(scope)
       end
 
       scopes

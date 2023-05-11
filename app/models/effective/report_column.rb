@@ -119,6 +119,8 @@ module Effective
     end
 
     def days_label
+      return unless operation.present?
+
       case operation.to_sym
       when :days_ago_eq then 'days ago'
       when :days_ago_gteq then 'days ago'

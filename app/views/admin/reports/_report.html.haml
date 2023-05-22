@@ -13,5 +13,11 @@
 = collapse('Show SQL') do
   %p= report.collection.to_sql
 
+- if (notifications = report.try(:notifications)).present?
+  %p.mt-3
+    The following notifications are sent based on this report:
+    - notifications.each do |notification|
+      = link_to(notification, effective_messaging.edit_admin_notification_path(notification), target: '_blank')
+
 - datatable = EffectiveReportDatatable.new(report: report)
 = render_datatable(datatable)

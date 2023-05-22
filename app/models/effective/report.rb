@@ -31,7 +31,7 @@ module Effective
 
     scope :deep, -> { includes(:report_columns, :report_scopes) }
     scope :sorted, -> { order(:title) }
-    scope :emails, -> { where(id: ReportColumn.emails.select(:report_id)) }
+    scope :notifiable, -> { where(id: ReportColumn.notifiable.select(:report_id)) }
 
     validates :title, presence: true, uniqueness: true
     validates :reportable_class_name, presence: true

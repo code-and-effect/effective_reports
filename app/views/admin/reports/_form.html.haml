@@ -3,6 +3,11 @@
     = render 'admin/reports/form_report', report: report
 
   - if report.persisted?
+    - if report.respond_to?(:notifications)
+      = tab 'Notifications' do
+        - datatable = Admin::EffectiveNotificationsDatatable.new(report: report)
+        = render_inline_datatable(datatable)
+
     - if report.respond_to?(:log_changes_datatable)
       = tab 'Logs' do
         = render_inline_datatable(report.log_changes_datatable)

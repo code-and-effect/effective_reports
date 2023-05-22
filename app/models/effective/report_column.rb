@@ -27,7 +27,7 @@ module Effective
 
     scope :deep, -> { includes(:report) }
     scope :sorted, -> { order(:position) }
-    scope :emails, -> { where('name ILIKE ?', "%email%").or(where(name: 'user')).or(where(name: 'owner')) }
+    scope :notifiable, -> { where('name ILIKE ?', "%email%").or(where(name: 'user')).or(where(name: 'owner')) }
 
     before_validation(if: -> { report.present? }) do
       self.position ||= (report.report_columns.map(&:position).compact.max || -1) + 1

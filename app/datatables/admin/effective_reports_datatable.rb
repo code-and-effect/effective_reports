@@ -15,6 +15,7 @@ module Admin
 
       col :report_columns, label: 'Columns', visible: false
       col :report_scopes, label: 'Scopes', visible: false
+      col :notifications, label: 'Notifications', visible: false
 
       col(:current_rows_count) do |report|
         report.collection().count

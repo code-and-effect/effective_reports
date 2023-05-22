@@ -36,6 +36,12 @@ module Effective
       end
     end
 
+    validate(if: -> {report&.reportable }) do
+      unless report.reportable.new.reportable_scopes.key?(name.to_sym)
+        errors.add(:name, "acts_as_reportable #{report.reportable} reportable_scopes() missing :#{name} scope")
+      end
+    end
+
     def to_s
       [name, operation_label, value].compact.join(' ').presence || 'report scope'
     end

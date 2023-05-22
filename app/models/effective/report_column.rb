@@ -27,7 +27,7 @@ module Effective
 
     scope :deep, -> { includes(:report) }
     scope :sorted, -> { order(:position) }
-    scope :emails, -> { where('name ILIKE ?', "%email%") }
+    scope :emails, -> { where('name ILIKE ?', "%email%").or(where(name: 'user')).or(where(name: 'owner')) }
 
     before_validation(if: -> { report.present? }) do
       self.position ||= (report.report_columns.map(&:position).compact.max || -1) + 1
@@ -51,6 +51,12 @@ module Effective
         self.errors.add(:value_string, "can't be blank")
         self.errors.add(:value_associated, "can't be blank")
         self.errors.add(:value_boolean, "can't be blank")
+      end
+    end
+
+    validate(if: -> { report&.reportable }) do
+      unless report.reportable.new.reportable_attributes.key?(name.to_sym)
+        errors.add(:name, "acts_as_reportable #{report.reportable} reportable_attributes() missing :#{name} attribute")
       end
     end
 

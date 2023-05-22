@@ -39,12 +39,31 @@ module Effective
       reportable_class_name.constantize if reportable_class_name.present?
     end
 
+    # Find or build
+    def col(name, atts = {})
+      atts[:name] ||= name.to_sym
+      atts[:as] ||= reportable_attributes[name]
+
+      report_columns.find { |col| atts.all? { |k, v| col.send(k) == v } } || report_columns.build(atts)
+    end
+
+    def scope(name, atts = {})
+      atts[:name] ||= name.to_sym
+      report_scopes.find { |scope| scope.name == name.to_s } || report_scopes.build(atts)
+    end
+
     def filtered_report_columns
       report_columns.select(&:filter?)
     end
 
     def email_report_column
       report_columns.find { |column| column.name == 'email' } || report_columns.find { |column| column.name.include?('email') }
+    end
+
+    def user_report_column
+      report_columns.find { |column| column.name == 'user' } ||
+      report_columns.find { |column| column.name == 'owner' } ||
+      report_columns.find { |column| column.name.include?('user') }
     end
 
     # Used to build the Reports form

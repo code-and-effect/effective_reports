@@ -10,6 +10,11 @@ module Effective
     has_many :report_scopes, -> { ReportScope.sorted }, inverse_of: :report, dependent: :delete_all
     accepts_nested_attributes_for :report_scopes, allow_destroy: true, reject_if: proc { |atts| atts['name'].blank? }
 
+    if defined?(EffectiveMessaging)
+      has_many :notifications, inverse_of: :report, dependent: :delete_all
+      accepts_nested_attributes_for :notifications, allow_destroy: true
+    end
+
     log_changes if respond_to?(:log_changes)
 
     DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to, :belongs_to_polymorphic, :has_many, :has_one]
@@ -44,12 +49,16 @@ module Effective
       atts[:name] ||= name.to_sym
       atts[:as] ||= reportable_attributes[name]
 
-      report_columns.find { |col| atts.all? { |k, v| col.send(k) == v } } || report_columns.build(atts)
+      report_columns.find { |col| atts.all? { |k, v| col.send(k).to_s == v.to_s } } || report_columns.build(atts)
     end
 
     def scope(name, atts = {})
       atts[:name] ||= name.to_sym
       report_scopes.find { |scope| scope.name == name.to_s } || report_scopes.build(atts)
+    end
+
+    def notification(atts = {})
+      notifications.find { |col| atts.all? { |k, v| col.send(k).to_s == v.to_s } } || notifications.build(atts)
     end
 
     def filtered_report_columns

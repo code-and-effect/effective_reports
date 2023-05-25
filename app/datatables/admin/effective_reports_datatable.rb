@@ -16,6 +16,10 @@ module Admin
       col :report_columns, label: 'Columns', visible: false
       col :report_scopes, label: 'Scopes', visible: false
 
+      if defined?(EffectiveMessaging)
+        col :notifications, label: 'Notifications'
+      end
+
       col(:current_rows_count) do |report|
         report.collection().count
       end

@@ -8,6 +8,10 @@ class EffectiveReportDatatable < Effective::Datatable
 
     col :id, visible: false
 
+    if report.reportable.column_names.include?('token')
+      col :token, visible: false
+    end
+
     report.report_columns.each do |column|
       col(column.name, as: column.as.to_sym)
     end

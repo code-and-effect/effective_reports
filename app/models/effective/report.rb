@@ -10,6 +10,11 @@ module Effective
     has_many :report_scopes, -> { ReportScope.sorted }, inverse_of: :report, dependent: :delete_all
     accepts_nested_attributes_for :report_scopes, allow_destroy: true, reject_if: proc { |atts| atts['name'].blank? }
 
+    if defined?(EffectiveMessaging)
+      has_many :notifications, inverse_of: :report, dependent: :delete_all
+      accepts_nested_attributes_for :notifications, allow_destroy: true
+    end
+
     log_changes if respond_to?(:log_changes)
 
     DATATYPES = [:boolean, :date, :decimal, :integer, :price, :string, :belongs_to, :belongs_to_polymorphic, :has_many, :has_one]
@@ -26,7 +31,7 @@ module Effective
 
     scope :deep, -> { includes(:report_columns, :report_scopes) }
     scope :sorted, -> { order(:title) }
-    scope :emails, -> { where(id: ReportColumn.emails.select(:report_id)) }
+    scope :notifiable, -> { where(id: ReportColumn.notifiable.select(:report_id)) }
 
     validates :title, presence: true, uniqueness: true
     validates :reportable_class_name, presence: true
@@ -39,12 +44,35 @@ module Effective
       reportable_class_name.constantize if reportable_class_name.present?
     end
 
+    # Find or build
+    def col(name, atts = {})
+      atts[:name] ||= name.to_sym
+      atts[:as] ||= reportable_attributes[name]
+
+      report_columns.find { |col| atts.all? { |k, v| col.send(k).to_s == v.to_s } } || report_columns.build(atts)
+    end
+
+    def scope(name, atts = {})
+      atts[:name] ||= name.to_sym
+      report_scopes.find { |scope| scope.name == name.to_s } || report_scopes.build(atts)
+    end
+
+    def notification(atts = {})
+      notifications.find { |col| atts.all? { |k, v| col.send(k).to_s == v.to_s } } || notifications.build(atts)
+    end
+
     def filtered_report_columns
       report_columns.select(&:filter?)
     end
 
     def email_report_column
       report_columns.find { |column| column.name == 'email' } || report_columns.find { |column| column.name.include?('email') }
+    end
+
+    def user_report_column
+      report_columns.find { |column| column.name == 'user' } ||
+      report_columns.find { |column| column.name == 'owner' } ||
+      report_columns.find { |column| column.name.include?('user') }
     end
 
     # Used to build the Reports form

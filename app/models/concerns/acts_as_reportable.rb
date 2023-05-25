@@ -29,6 +29,11 @@ module ActsAsReportable
     {}
   end
 
+  # Something that returns an email
+  def reportable_email
+    try(:email) || try(:user).try(:email) || try(:owner).try(:email) || raise("No reportable_email found")
+  end
+
   private
 
   def all_reportable_attributes

@@ -34,6 +34,11 @@ module ActsAsReportable
     try(:email) || try(:user).try(:email) || try(:owner).try(:email) || raise("No reportable_email found")
   end
 
+  # Used for the notifications mailer
+  def reportable_view_assigns(view)
+    {}
+  end
+
   private
 
   def all_reportable_attributes

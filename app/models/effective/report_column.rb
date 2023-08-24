@@ -1,6 +1,6 @@
 module Effective
   class ReportColumn < ActiveRecord::Base
-    self.table_name = EffectiveReports.report_columns_table_name.to_s
+    self.table_name = (EffectiveReports.report_columns_table_name || :report_columns).to_s
 
     belongs_to :report
 

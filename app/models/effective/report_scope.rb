@@ -1,6 +1,6 @@
 module Effective
   class ReportScope < ActiveRecord::Base
-    self.table_name = EffectiveReports.report_scopes_table_name.to_s
+    self.table_name = (EffectiveReports.report_scopes_table_name || :report_scopes).to_s
 
     belongs_to :report
 

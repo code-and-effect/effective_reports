@@ -1,6 +1,6 @@
 module Effective
   class Report < ActiveRecord::Base
-    self.table_name = EffectiveReports.reports_table_name.to_s
+    self.table_name = (EffectiveReports.reports_table_name || :reports).to_s
 
     belongs_to :created_by, polymorphic: true, optional: true
 

@@ -1,8 +1,4 @@
 EffectiveReports.setup do |config|
-  config.reports_table_name = :reports
-  config.report_columns_table_name = :report_columns
-  config.report_scopes_table_name = :report_scopes
-
   # Layout Settings
   # Configure the Layout per controller, or all at once
   # config.layout = { application: 'application', admin: 'admin' }

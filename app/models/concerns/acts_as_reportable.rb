@@ -35,7 +35,11 @@ module ActsAsReportable
   end
 
   # Used for the notifications mailer
-  def reportable_view_assigns(view)
+  # This should be a view_context that you can call urls on
+  # But it's a bit weird and sometimes it's just nil (like on an update action in the validation)
+  # Be careful when you code stuff for it
+  # Always return all the keys, and leave the value blank if view is blank
+  def reportable_view_assigns(view = nil)
     {}
   end
 

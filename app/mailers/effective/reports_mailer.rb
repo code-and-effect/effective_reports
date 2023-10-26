@@ -2,7 +2,7 @@ module Effective
   class ReportsMailer < EffectiveReports.parent_mailer_class
 
     include EffectiveMailer
-    include EffectiveEmailTemplatesMailer if EffectiveReports.use_effective_email_templates
+    #include EffectiveEmailTemplatesMailer
 
     # def reports_submitted(resource, opts = {})
     #   @assigns = assigns_for(resource)

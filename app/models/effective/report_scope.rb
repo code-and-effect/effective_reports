@@ -45,7 +45,7 @@ module Effective
 
       scope_error = begin
         apply_scope(reportable.all).to_sql; nil
-      rescue Exception => e
+      rescue StandardError => e
         e.message
       end
 

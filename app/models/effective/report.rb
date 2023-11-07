@@ -39,7 +39,7 @@ module Effective
     validate do
       error = begin
         collection().to_sql; nil
-      rescue Exception => e
+      rescue StandardError => e
         e.message
       end
 

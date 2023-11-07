@@ -36,6 +36,16 @@ module Effective
     validates :title, presence: true, uniqueness: true
     validates :reportable_class_name, presence: true
 
+    validate do
+      error = begin
+        collection().to_sql; nil
+      rescue StandardError => e
+        e.message
+      end
+
+      errors.add(:base, "Invalid Report: #{error}") if error.present?
+    end
+
     def to_s
       title.presence || 'report'
     end
@@ -107,7 +117,7 @@ module Effective
 
       # Apply Scopes
       report_scopes.each do |scope|
-        collection = (scope.value.nil? ? collection.send(scope.name) : collection.send(scope.name, scope.value))
+        collection = scope.apply_scope(collection)
       end
 
       # Apply Includes

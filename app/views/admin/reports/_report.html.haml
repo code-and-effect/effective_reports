@@ -1,23 +1,24 @@
-- if report.description.present?
-  %p= simple_format(report.description)
+= card do
+  - if report.description.present?
+    %p= simple_format(report.description)
 
-- if report.filtered_report_columns.present? || report.report_scopes.present?
-  %p The results of this report have been filtered by the following:
+  - if report.filtered_report_columns.present? || report.report_scopes.present?
+    %p The results of this report have been filtered by the following:
 
-- if report.filtered_report_columns.present?
-  %p= badges(report.filtered_report_columns.map(&:to_s))
+  - if report.filtered_report_columns.present?
+    %p= badges(report.filtered_report_columns.map(&:to_s))
 
-- if report.report_scopes.present?
-  %p= badges(report.report_scopes.map(&:to_s))
+  - if report.report_scopes.present?
+    %p= badges(report.report_scopes.map(&:to_s))
 
-= collapse('Show SQL') do
-  %p= report.collection.to_sql
+  = collapse('Show SQL') do
+    %p= report.collection.to_sql
 
-- if (notifications = report.try(:notifications)).present?
-  %p.mt-3
-    The following notifications are sent based on this report:
-    - notifications.each do |notification|
-      = link_to(notification, effective_messaging.edit_admin_notification_path(notification), target: '_blank')
+  - if (notifications = report.try(:notifications)).present?
+    %p.mt-3
+      The following notifications are sent based on this report:
+      - notifications.each do |notification|
+        = link_to(notification, effective_messaging.edit_admin_notification_path(notification), target: '_blank')
 
-- datatable = EffectiveReportDatatable.new(report: report)
-= render_datatable(datatable)
+  - datatable = EffectiveReportDatatable.new(report: report)
+  = render_datatable(datatable)

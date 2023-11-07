@@ -37,9 +37,19 @@ module Effective
     end
 
     validate(if: -> {report&.reportable }) do
-      unless report.reportable.new.reportable_scopes.key?(name.to_sym)
-        errors.add(:name, "acts_as_reportable #{report.reportable} reportable_scopes() missing :#{name} scope")
+      reportable = report.reportable
+
+      if reportable.new.reportable_scopes.key?(name.to_sym) == false
+        errors.add(:name, "acts_as_reportable #{reportable} reportable_scopes() missing :#{name} scope")
       end
+
+      scope_error = begin
+        apply_scope(reportable.all).to_sql; nil
+      rescue Exception => e
+        e.message
+      end
+
+      self.errors.add(:name, scope_error) if scope_error.present?
     end
 
     def to_s
@@ -52,6 +62,10 @@ module Effective
 
     def operation_label
       return '=' if advanced?
+    end
+
+    def apply_scope(collection)
+      value.nil? ? collection.send(name) : collection.send(name, value)
     end
 
   end

@@ -6,6 +6,7 @@ module ActsAsReportable
   extend ActiveSupport::Concern
 
   PRICE_NAME_ATTRIBUTES = ['price', 'subtotal', 'tax', 'total', 'current_revenue', 'current_revenue_subtotal', 'current_revenue_tax', 'deferred_revenue', 'deferred_revenue_subtotal', 'deferred_revenue_tax', 'amount_owing', 'surcharge']
+  DENY_LIST = [:logged_changes, :password, :encrypted_password]
 
   module Base
     def acts_as_reportable(options = nil)
@@ -80,7 +81,7 @@ module ActsAsReportable
       end; h
     end
 
-    atts.merge(associated)
+    atts.merge(associated).except(*DENY_LIST)
   end
 
 end

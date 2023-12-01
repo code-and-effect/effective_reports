@@ -23,7 +23,7 @@ class EffectiveReportDatatable < Effective::Datatable
   end
 
   def report
-    Effective::Report.find(attributes[:report_id])
+    Effective::Report.deep.find(attributes[:report_id])
   end
 
 end

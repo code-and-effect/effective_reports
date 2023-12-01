@@ -29,7 +29,12 @@ module Effective
       timestamps
     end
 
-    scope :deep, -> { includes(:report_columns, :report_scopes) }
+    scope :deep, -> { 
+      base = includes(:report_columns, :report_scopes) 
+      base = base.includes(:notifications) if defined?(EffectiveMessaging)
+      base
+    }
+
     scope :sorted, -> { order(:title) }
     scope :notifiable, -> { where(id: ReportColumn.notifiable.select(:report_id)) }
 

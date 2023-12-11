@@ -43,9 +43,9 @@ module Effective
 
     validate do
       error = begin
-        collection().to_sql; nil
+        collection().first; nil
       rescue StandardError => e
-        e.message
+        e.message.gsub('<', '').gsub('>', '')
       end
 
       errors.add(:base, "Invalid Report: #{error}") if error.present?

@@ -116,6 +116,24 @@ module Effective
       scopes
     end
 
+    def duplicate
+      Effective::Report.new(attributes.except('id', 'updated_at', 'created_at')).tap do |report|
+        report.title = title + ' (Copy)'
+
+        report_columns.each do |report_column|
+          report.report_columns.build(report_column.attributes.except('id', 'updated_at', 'created_at'))
+        end
+
+        report_scopes.each do |report_scope|
+          report.report_scopes.build(report_scope.attributes.except('id', 'updated_at', 'created_at'))
+        end
+      end
+    end
+
+    def duplicate!
+      duplicate.tap { |event| event.save! }
+    end
+
     # The klass to base the collection from
     def collection
       collection = reportable.all

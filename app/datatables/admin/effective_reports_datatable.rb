@@ -2,14 +2,16 @@ module Admin
   class EffectiveReportsDatatable < Effective::Datatable
 
     datatable do
-      order :id
+      order :updated_at
+
       col :id, visible: false
 
+      col :updated_at, visible: false
       col :created_at, visible: false
       col :created_by, visible: false
 
       col :title
-      col :description
+      col :description, visible: false
 
       col :reportable_class_name, label: 'Resource', search: EffectiveReports.reportable_classes.map(&:to_s), visible: false
 
@@ -20,7 +22,7 @@ module Admin
         col :notifications, label: 'Notifications'
       end
 
-      col(:current_rows_count) do |report|
+      col :current_rows_count, label: 'Count' do |report|
         report.collection().count
       end
 

@@ -14,6 +14,10 @@
   = collapse('Show SQL') do
     %p= report.collection.to_sql
 
+  = collapse('Show Seeds') do
+    %small
+      %pre= report.seeds
+
   - if (notifications = report.try(:notifications)).present?
     %p.mt-3
       The following notifications are sent based on this report:

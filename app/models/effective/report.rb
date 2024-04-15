@@ -116,6 +116,43 @@ module Effective
       scopes
     end
 
+    # Return a string you can copy and paste into a seeds file
+    def seeds
+      seeds = [
+        "report = Effective::Report.where(title: \"#{title}\", reportable_class_name: \"#{reportable_class_name}\").first_or_initialize",
+        ("report.assign_attributes(description: \"#{description}\")" if description.present?),
+      ].compact
+
+      seeds += report_columns.map do |column|
+        attributes = column.dup.attributes.except('name', 'report_id', 'position', 'as').compact
+        attributes.delete('filter') unless attributes['filter']
+
+        if attributes.present?
+          attributes = attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')
+          "report.col(:#{column.name}, #{attributes})"
+        else
+          "report.col(:#{column.name})"
+        end
+      end
+
+      seeds += report_scopes.map do |scope|
+        attributes = scope.dup.attributes.except('name', 'report_id', 'position').compact
+
+        if attributes.present?
+          attributes = attributes.map { |k, v| "#{k}: #{v.inspect}" }.join(', ')
+          "report.scope(:#{scope.name}, #{attributes})"
+        else
+          "report.scope(:#{scope.name})"
+        end
+      end
+
+      seeds += [
+        "report.save!"
+      ]
+
+      seeds.join("\n")
+    end
+
     def duplicate
       Effective::Report.new(attributes.except('id', 'updated_at', 'created_at')).tap do |report|
         report.title = title + ' (Copy)'

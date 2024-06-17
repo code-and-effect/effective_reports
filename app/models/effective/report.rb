@@ -84,10 +84,12 @@ module Effective
       report_columns.find { |column| column.name == 'email' } || report_columns.find { |column| column.name.include?('email') }
     end
 
-    def user_report_column
+    def emailable_report_column
       report_columns.find { |column| column.name == 'user' } ||
       report_columns.find { |column| column.name == 'owner' } ||
-      report_columns.find { |column| column.name.include?('user') }
+      report_columns.find { |column| column.name.include?('user') } || 
+      report_columns.find { |column| column.name == 'organization' } ||
+      report_columns.find { |column| column.name.include?('organization') }
     end
 
     # Used to build the Reports form

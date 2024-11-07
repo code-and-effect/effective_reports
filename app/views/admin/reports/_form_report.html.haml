@@ -126,7 +126,7 @@
                       = frc.select :operation, reportable_operations_collection(:belongs_to), label: false
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
-                      = frc.text_field :value_associated, label: false
+                      = frc.text_field :value_associated, label: false, input_html: { maxlength: nil }
 
                 = frc.show_if_any(:name, value_belong_to_polymorphics) do
                   .row
@@ -138,7 +138,7 @@
                       = frc.select :operation, reportable_operations_collection(:belongs_to_polymorphic), label: false
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
-                      = frc.text_field :value_associated, label: false
+                      = frc.text_field :value_associated, label: false, input_html: { maxlength: nil }
 
 
                 = frc.show_if_any(:name, value_has_manys) do
@@ -151,7 +151,7 @@
                       = frc.select :operation, reportable_operations_collection(:has_many), label: false
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
-                      = frc.text_field :value_associated, label: false
+                      = frc.text_field :value_associated, label: false, input_html: { maxlength: nil }
 
                 = frc.show_if_any(:name, value_has_ones) do
                   .row
@@ -163,7 +163,7 @@
                       = frc.select :operation, reportable_operations_collection(:has_one), label: false
 
                     .col.effective-report-filter{style: ('display: none;' unless frc.object.filter?)}
-                      = frc.text_field :value_associated, label: false
+                      = frc.text_field :value_associated, label: false, input_html: { maxlength: nil }
 
     - if scopes.present?
       %h2 Report Scopes

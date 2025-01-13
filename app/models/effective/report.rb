@@ -45,6 +45,7 @@ module Effective
       error = begin
         collection().first; nil
       rescue StandardError => e
+        raise(e) if Rails.env.development?
         e.message.gsub('<', '').gsub('>', '')
       end
 

@@ -22,7 +22,7 @@ module Admin
         col :notifications, label: 'Notifications'
       end
 
-      col :current_rows_count, label: 'Count' do |report|
+      col :current_rows_count, label: 'Count', visible: false do |report|
         report.collection().count
       end
 

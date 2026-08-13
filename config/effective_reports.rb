@@ -14,7 +14,7 @@ EffectiveReports.setup do |config|
   config.reportable_class_names = ['User', 'Effective::Order']
 
   # Mailer Settings
-  # Please see config/initializers/effective_reports.rb for default effective_* gem mailer settings
+  # Please see config/initializers/effective_resources.rb for default effective_* gem mailer settings
   #
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Effective::ReportsMailer'

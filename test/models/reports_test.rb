@@ -1,6 +1,20 @@
 require 'test_helper'
 
 class ReportsTest < ActiveSupport::TestCase
+  test 'reportable classes' do
+    assert_includes EffectiveReports.reportable_classes, User
+  end
+
+  test 'additional reportable classes' do
+    original = EffectiveReports.additional_class_names
+    EffectiveReports.additional_class_names = ['User', 'MissingClass']
+
+    assert_includes EffectiveReports.reportable_classes, User
+    assert_equal 1, EffectiveReports.reportable_classes.count { |klass| klass == User }
+  ensure
+    EffectiveReports.additional_class_names = original
+  end
+
   test 'user factory' do
     user = build_user()
     assert user.valid?

@@ -8,10 +8,11 @@ EffectiveReports.setup do |config|
   # This should extend from Effective::Reports
   # config.reports_class_name = 'Effective::Reports'
 
-  # Reportable Class Names
-  # The following classes will be available to build reports from
-  # They must define acts_as_reportable to be included
-  config.reportable_class_names = ['User', 'Effective::Order']
+  # Additional Reportable Class Names
+  # The gem automatically includes the tenant user, common tenant-overridden
+  # models, and shared Effective models. Add application-specific models here.
+  # They must define acts_as_reportable to be included.
+  config.additional_class_names = []
 
   # Mailer Settings
   # Please see config/initializers/effective_resources.rb for default effective_* gem mailer settings

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    effective_reports (0.4.10)
+    effective_reports (0.5.0)
       effective_bootstrap
       effective_datatables (>= 4.0.0)
       effective_resources
@@ -383,7 +383,6 @@ DEPENDENCIES
   effective_test_bot
   haml-rails
   pry-byebug
-  psych
   sqlite3
   wicked
 

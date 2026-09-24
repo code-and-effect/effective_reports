@@ -34,10 +34,9 @@ module EffectiveReports
         ([tenant, 'Applicant'].compact.join('::')),
         ([tenant, 'ApplicantReference'].compact.join('::')),
         ([tenant, 'ApplicantReview'].compact.join('::')),
-        "Effective::Fee",
-        "Effective::Membership",
-        "Effective::MembershipHistory"
+        "Effective::Fee"
       ]
+      names += [EffectiveMemberships.Membership, EffectiveMemberships.MembershipHistory].compact.map(&:name)
     end
 
     if defined?(EffectiveCpd)
